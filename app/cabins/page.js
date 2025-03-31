@@ -1,19 +1,21 @@
 import Counter from "@/app/_components/Counter"
 import Navigation from "../_components/Navigation"
 import CabinCard from "@/app/_components/CabinCard";
-// import { getCabins } from "../lib/data-service";
+import { getBookings, getCabins, getGuest } from "../lib/data-service";
 
 export const metadata = {
   title: "Cabins",
-
 }
 
 export default async function Page() {
   // CHANGE
-  // const cabins = await getCabins();
+  const cabins = await getCabins();
+  // const guest = await getGuest("ayaderombi@gmail.com")
+  // const booking = await getBookings(1);
 
   console.log("Starting....")
-  console.log(cabins)
+  // console.log(cabins)
+  // console.log(guest)
 
   return (
     <div>

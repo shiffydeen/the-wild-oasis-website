@@ -1,10 +1,9 @@
-import React from 'react'
+
+import Spinner from '@/app/_components/Spinner'
 
 const Loading = () => {
   return (
-    <p>
-      LOADING DATA...
-    </p>
+    <Spinner />
   )
 }
 
