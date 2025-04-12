@@ -1,3 +1,4 @@
+import { auth } from '@/auth';
 import React from 'react'
 
 export const metadata = {
@@ -5,10 +6,15 @@ export const metadata = {
   
 }
 
-const Page = () => {
+const Page = async () => {
+
+  const session = await auth();
+  console.log(session)
+  const firstName = session.user.name.split(" ").at(0);
+
   return (
     <h2 className="font-semibold text-2xl text-accent-400 mb-7">
-        Welcome, Sheriff
+        Welcome, {firstName}
       </h2>
   )
 }

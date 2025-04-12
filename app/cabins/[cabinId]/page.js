@@ -1,7 +1,7 @@
 import Cabin from "@/app/_components/Cabin";
 import Reservation from "@/app/_components/Reservation";
 import Spinner from "@/app/_components/Spinner";
-import { auth } from "@/app/_lib/auth";
+import { auth } from "@/auth";
 
 
 
