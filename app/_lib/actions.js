@@ -26,7 +26,38 @@ export async function updateGuest(formData) {
      revalidatePath('/account/profile')
 }
 
-export async function deleteReservation(bookingId) {
+export async function createBooking(bookingData, formData) {
+    const session = await auth();
+    if (!session) throw new Error("You must be logged in");
+
+    const newBooking = {
+        ...bookingData, 
+        guestId: session.user.guestId, 
+        numGuests: Number(formData.get('numGuests')),
+        observations: formData.get('observations').slice(0, 1000),
+        extrasPrice: 0,
+        totalPrice: bookingData.cabinPrice,
+        isPaid: false,
+        hasBreakfast: false,
+        status: 'unconfirmed',
+    }
+    console.log(newBooking)
+
+    const { error } = await supabase
+    .from('bookings')
+    .insert([newBooking])
+
+
+  if (error) {
+    throw new Error('Booking could not be created');
+  }
+
+  revalidatePath(`/cabins/${bookingData.cabinId}`);
+
+  redirect('/cabins/thankyou')
+}
+
+export async function deleteBooking(bookingId) {
     const session = await auth();
     if (!session) throw new Error("You must be logged in");
 
@@ -41,25 +72,45 @@ export async function deleteReservation(bookingId) {
     revalidatePath('/account/reservations')
 }
 
-export async function updateReservation(bookingId) {
+export async function updateBooking(formData) {
+
+    console.log(formData)
+
+    const bookingId = Number(formData.get('bookingId'));
+//  1) Authentication
     const session = await auth();
     if (!session) throw new Error("You must be logged in");
 
-    // const booking = await getBooking(bookingId)
-    // console.log(booking)
-//     const { data, error } = await supabase
-//     .from('bookings')
-//     .update(updatedFields)
-//     .eq('id', bookingId)
-//     .select()
-//     .single();
+// 2) Authorization
+    const guestBookings = await getBookings(session.user.guestId);
+    const guestBookingIds = guestBookings.map(booking=>booking.id);
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Booking could not be updated');
-//   }
+    if(!guestBookingIds.includes(bookingId)) throw new Error('You are not allowed to update this booking');
+    
+// 3) Building update data
+    const updateData = {
+        numGuests: Number(formData.get('numGuests')),
+        observations: formData.get("observations").slice(0, 1000)
+    }
 
-//   redirect('/account/reservations')
+  
+// 4) Mutation
+    const { data, error } = await supabase
+    .from('bookings')
+    .update(updateData)
+    .eq('id', bookingId)
+  
+// 5) Error handling
+  if (error) {
+    console.error(error);
+    throw new Error('Booking could not be updated');
+  }
+
+// 6) Revalidate
+revalidatePath(`/account/reservations/${bookingId}`)
+revalidatePath('/account/reservations')
+// 7) Redirecting
+  redirect('/account/reservations')
 }
 
 export async function signInAction() {

@@ -9,11 +9,14 @@ const Filter = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  // console.log(searchParams)
+
   const activeFilter = searchParams.get("capacity") ?? "all"
 
   const handleFilter = (filter) => {
     const params = new URLSearchParams(searchParams);
     params.set("capacity", filter);
+    // console.log(params)
     router.replace(`${pathname}?${params.toString()}`, {scroll: false});
   }
 

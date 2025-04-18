@@ -9,6 +9,9 @@ import { getCabin, getCabins } from "@/app/_lib/data-service";
 import { Auth } from "@auth/core";
 import Image from "next/image";
 import { Suspense } from "react";
+import { supabase } from "@/app/_lib/supabase";
+import { eachDayOfInterval } from "date-fns";
+
 
 export async function generateMetadata({params}) {
     const {name} = await getCabin(params.cabinId);
@@ -38,7 +41,19 @@ export async function generateStaticParams() {
 
 export default async function Page({params}) {
 
-    const cabin = await getCabin(params.cabinId)
+    const cabin = await getCabin(params.cabinId);
+
+    const {data, error} = (await supabase.from('bookings').select('*').eq('cabinId', 2));
+
+    // const bookedDates = data
+    //   .map((booking) => {
+    //     return eachDayOfInterval({
+    //       start: new Date(booking.startDate),
+    //       end: new Date(booking.endDate),
+    //     });
+    //   })
+
+    // console.log(bookedDates.flat())
 
 
   return (
