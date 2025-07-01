@@ -45,6 +45,8 @@ export default async function Page({params}) {
 
     const {data, error} = (await supabase.from('bookings').select('*').eq('cabinId', 2));
 
+    // console.log(data)
+
     // const bookedDates = data
     //   .map((booking) => {
     //     return eachDayOfInterval({
